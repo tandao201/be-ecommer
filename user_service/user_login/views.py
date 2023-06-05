@@ -5,13 +5,15 @@ from django.shortcuts import render
 import json
 from django.views.decorators.csrf import csrf_exempt
 from user_model.models import user_registration
+from django.forms.models import model_to_dict
 
 
 ### This function is created for validating the user.
 def user_validation(uname, password):
-    user_data = user_registration.objects.filter(email=uname, password=password)
+    user_data = user_registration.objects.get(email=uname, password=password)
     if user_data:
-        return "Valid User"
+        print(user_data)
+        return user_data
     else:
         return "Invalid User"
 
@@ -28,10 +30,10 @@ def user_login(request):
         respdata = user_validation(uname, password)
 
         ### If user is valid then it give success as response.
-        if respdata == "Valid User":
+        if respdata != "Valid User":
             resp['status'] = 'Success'
             resp['status_code'] = '200'
-            resp['message'] = 'Welcome to Ecommerce website......'
+            resp['message'] = model_to_dict(respdata)
 
         ### If user is invalid then it give failed as response.
         elif respdata == "Invalid User":
